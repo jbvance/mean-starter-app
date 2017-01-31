@@ -6,6 +6,7 @@ const compress = require('compression');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const passport = require('passport');
 
 module.exports = function(){
   const app = express();
@@ -31,7 +32,12 @@ module.exports = function(){
   app.set('views', './app/views');
   app.set('view engine', 'ejs');
 
+  app.use(passport.initialize());
+  app.use(passport.session());
+
   require('../app/routes/index.server.routes.js')(app);
+  require('../app/routes/users.server.routes.js')(app);
+
 
   //Should go below the require listed above - Order matters
   app.use(express.static('./public'));
