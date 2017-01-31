@@ -3,3 +3,9 @@ node_modules
 
 # Environment variables
 .env
+
+# Production config file
+config/env/production.js
+
+#Debug log
+npm-debug.log
