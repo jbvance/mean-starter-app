@@ -9,6 +9,7 @@ const UserSchema = new Schema({
 	lastName: String,
 	email: {
 		type: String,
+    lowercase: true,
 		// Validate the email format
 		match: [/.+\@.+\..+/, "Please fill a valid email address"]
 	},
