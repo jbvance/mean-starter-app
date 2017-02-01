@@ -1,5 +1,5 @@
 require('dotenv').load();
-const config = require('./config');
+//const config = require('./config');
 const express = require('express');
 const morgan = require('morgan');
 const compress = require('compression');
