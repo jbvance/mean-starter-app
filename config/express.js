@@ -8,6 +8,7 @@ const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
+const MongoStore = require('connect-mongo')(session);
 
 module.exports = function(){
   const app = express();
@@ -26,7 +27,10 @@ module.exports = function(){
   app.use(session({
     saveUninitialized: true,
     resave: true,
-    secret: process.env.SESSION_SECRET
+    secret: process.env.SESSION_SECRET,
+    store: new MongoStore({
+      url: process.env.SESSION_DB_URI,
+      ttl: 2 * 24 * 60 * 60}) //persist sessio for 2 days
     //secret: config.sessionSecret
   }));
 
