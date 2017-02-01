@@ -10,6 +10,7 @@ const UserSchema = new Schema({
 	email: {
 		type: String,
     lowercase: true,
+		unique: true,
 		// Validate the email format
 		match: [/.+\@.+\..+/, "Please fill a valid email address"]
 	},
@@ -18,7 +19,7 @@ const UserSchema = new Schema({
 		// Set a unique 'username' index
 		unique: true,
 		// Validate 'username' value existance
-		required: 'Username is required',
+		//required: 'Username is required',
 		// Trim the 'username' field
 		trim: true
 	},
