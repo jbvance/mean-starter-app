@@ -7,6 +7,6 @@ const configurePassport = require('./config/passport');
 const db = configureMongoose();
 const app = configureExpress();
 const passport = configurePassport();
-app.listen(process.env.PORT || 3000)
+app.listen(process.env.PORT || 3000);
 module.exports = app;
 console.log('Server running at http://localhost:3000');
