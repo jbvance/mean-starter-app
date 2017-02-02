@@ -67,10 +67,18 @@ exports.renderSignup = function(req, res, next) {
 exports.signup = function(req, res, next) {
 	// If user is not connected, create and login a new user, otherwise redirect the user back to the main application page
 	if (!req.user) {
+    var password = req.body.password
 		// Create a new 'User' model instance
 		const user = new User(req.body);
 		const message = null;
-
+    //require password to be at least six characters
+    if (password.length < 6){
+      const message = "Password must be at least six characters";
+      // Set the flash messages
+      req.flash('error', message);
+      // Redirect the user back to the signup page
+      return res.redirect('/signup');
+    }
 		// Set the user provider property
 		user.provider = 'local';
 

@@ -16,14 +16,6 @@ const UserSchema = new Schema({
 		// Validate the email format
 		match: [/.+\@.+\..+/, "Please fill a valid email address"]
 	},
-	password: {
-		type: String,
-		// Validate the 'password' value length
-		validate: [
-			(password) => password && password.length > 6,
-			'Password should be longer'
-		]
-	},
 	hash: {
 		type: String
 	},
