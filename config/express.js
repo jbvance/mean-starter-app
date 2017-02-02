@@ -11,6 +11,9 @@ const passport = require('passport');
 const MongoStore = require('connect-mongo')(session);
 
 module.exports = function(){
+
+  var routesApi = require('../app/api/routes/index');
+
   const app = express();
   if (process.env.NODE_ENV === 'development'){
     app.use(morgan('dev'));
@@ -41,12 +44,15 @@ module.exports = function(){
   app.use(passport.initialize());
   app.use(passport.session());
 
+
   require('../app/routes/index.server.routes.js')(app);
   require('../app/routes/users.server.routes.js')(app);
-
+  app.use('/api', routesApi);
 
   //Should go below the require listed above - Order matters
   app.use(express.static('./public'));
+
+
 
   return app;
 }
