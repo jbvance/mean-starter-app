@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const Schema = mongoose.Schema;
+var jwt = require('jsonwebtoken');
 
 // Define a new 'UserSchema'
 const UserSchema = new Schema({
@@ -11,18 +12,10 @@ const UserSchema = new Schema({
 		type: String,
     lowercase: true,
 		unique: true,
+		required: true,
 		// Validate the email format
 		match: [/.+\@.+\..+/, "Please fill a valid email address"]
 	},
-	//username: {
-	//	type: String,
-		// Set a unique 'username' index
-		//unique: true,
-		// Validate 'username' value existance
-		//required: 'Username is required',
-		// Trim the 'username' field
-		//trim: true
-	//},
 	password: {
 		type: String,
 		// Validate the 'password' value length
@@ -30,6 +23,9 @@ const UserSchema = new Schema({
 			(password) => password && password.length > 6,
 			'Password should be longer'
 		]
+	},
+	hash: {
+		type: String
 	},
 	salt: {
 		type: String
@@ -57,54 +53,27 @@ UserSchema.virtual('fullName').get(function() {
 	this.lastName = splitName[1] || '';
 });
 
-// Use a pre-save middleware to hash the password
-UserSchema.pre('save', function(next) {
-	if (this.password) {
-		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-		this.password = this.hashPassword(this.password);
-	}
-
-	next();
-});
-
-// Create an instance method for hashing a password
-UserSchema.methods.hashPassword = function(password) {
-	return crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('base64');
+UserSchema.methods.setPassword = function(password){
+  this.salt = crypto.randomBytes(16).toString('hex');
+  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
 };
 
-// Create an instance method for authenticating user
-UserSchema.methods.authenticate = function(password) {
-	return this.password === this.hashPassword(password);
+UserSchema.methods.validPassword = function(password) {
+  var hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  return this.hash === hash;
 };
 
-// Find possible not used username
-UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
-	// Add a 'username' suffix
-	const possibleUsername = username + (suffix || '');
+UserSchema.methods.generateJwt = function() {
+  var expiry = new Date();
+  expiry.setDate(expiry.getDate() + 7);
 
-	// Use the 'User' model 'findOne' method to find an available unique username
-	this.findOne({
-		username: possibleUsername
-	}, (err, user) => {
-		// If an error occurs call the callback with a null value, otherwise find find an available unique username
-		if (!err) {
-			// If an available unique username was found call the callback method, otherwise call the 'findUniqueUsername' method again with a new suffix
-			if (!user) {
-				callback(possibleUsername);
-			} else {
-				return this.findUniqueUsername(username, (suffix || 0) + 1, callback);
-			}
-		} else {
-			callback(null);
-		}
-	});
+  return jwt.sign({
+    _id: this._id,
+    email: this.email,
+    name: this.name,
+    exp: parseInt(expiry.getTime() / 1000),
+  }, process.env.JWT_SECRET); // DO NOT KEEP YOUR SECRET IN THE CODE!
 };
-
-// Configure the 'UserSchema' to use getters and virtuals when transforming to JSON
-UserSchema.set('toJSON', {
-	getters: true,
-	virtuals: true
-});
 
 // Create the 'User' model out of the 'UserSchema'
 mongoose.model('User', UserSchema);

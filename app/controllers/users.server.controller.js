@@ -74,8 +74,11 @@ exports.signup = function(req, res, next) {
 		// Set the user provider property
 		user.provider = 'local';
 
+    user.setPassword(req.body.password);
+
 		// Try saving the new user document
 		user.save((err) => {
+      var token
 			// If an error occurs, use flash messages to report the error
 			if (err) {
 				// Use the error handling method to get the error message
@@ -97,7 +100,8 @@ exports.signup = function(req, res, next) {
 				return res.redirect('/');
 			});
 		});
-	} else {
+	} else { //login was successfull
+    token = user.generateJwt();
 		return res.redirect('/');
 	}
 };
