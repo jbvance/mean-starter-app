@@ -1,0 +1,22 @@
+<html>
+<head>
+	<%- include ./partials/header.ejs %>
+	<!-- Use the 'title' property to render a page title  -->
+	<title><%= title %></title>
+</head>
+<body>
+  <% for(var i in messages) { %>
+     <div class="alert alert-danger"><%= messages[i] %></div>
+  <% } %>
+
+<form action="/forgot" method="POST" >
+  <legend>Forgot Password</legend>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="text" name="email" autofocus="autofocus" class="form-control"/>
+  </div>
+  <button type="submit" class="btn btn-primary">Reset Password</button>
+</form>
+<%- include ./partials/footer.ejs %>
+</body>
+</html>
