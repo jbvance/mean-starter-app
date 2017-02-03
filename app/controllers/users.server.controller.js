@@ -14,7 +14,7 @@ const getErrorMessage = function(err) {
 			// If a unique index error occurs set the message error
 			case 11000:
 			case 11001:
-				message = 'Username already exists';
+				message = err.message;//'Username already exists';
 				break;
 			// If a general error occurs set the message error
 			default:

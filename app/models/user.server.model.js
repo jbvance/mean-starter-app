@@ -6,8 +6,6 @@ var jwt = require('jsonwebtoken');
 
 // Define a new 'UserSchema'
 const UserSchema = new Schema({
-	firstName: String,
-	lastName: String,
 	email: {
 		type: String,
     lowercase: true,
@@ -29,6 +27,8 @@ const UserSchema = new Schema({
 	},
 	providerId: String,
 	providerData: {},
+	resetPasswordToken: String,
+	resetPasswordExpires: Date,
 	created: {
 		type: Date,
 		// Create a default 'created' value
