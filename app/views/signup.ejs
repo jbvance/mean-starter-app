@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<%- include ./partials/header.ejs %>
 	<!-- Use the 'title' property to render a page title  -->
 	<title><%= title %></title>
 	<!-- Latest compiled and minified CSS -->
@@ -13,37 +14,31 @@
 	   <div class="alert alert-danger"><%= messages[i] %></div>
 	<% } %>
 		<!-- Render the signup form  -->
-		<form class="form-signin" action="/signup" method="post">
-			<div>
-				<label>First Name:</label>
-				<input type="text" name="firstName" />
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 col-md-offset-3">
+		      <form action="/signup" method="post">
+		        <h2 class="form-signin-heading">Please Enter the following information to sign up:</h2>
+		        <label for="email" class="sr-only">Email address</label>
+		        <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+		        <label for="password" class="sr-only">Password</label>
+		        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+		        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		      </form>
 			</div>
-			<div>
-				<label>Last Name:</label>
-				<input type="text" name="lastName" />
 			</div>
-			<div>
-				<label>Email:</label>
-				<input type="text" name="email" />
-			</div>
-			<div>
-				<label>Password:</label>
-				<input type="password" name="password" />
-			</div>
-			<div>
-				<input type="submit" value="Sign up" />
-			</div>
-		</form>
+
+	    </div> <!-- /container -->
 
 
-	<!-- Render the OAuth authentication links  -->
+
+	<!-- Render the OAuth authentication links
 	<a href="/oauth/facebook">Sign in with Facebook</a>
 	<a href="/oauth/twitter">Sign in with Twitter</a>
 	<a href="/oauth/google">Sign in with Google</a>
+-->
 
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-	integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<%- include ./partials/footer.ejs %>
 
 </body>
 </html>
