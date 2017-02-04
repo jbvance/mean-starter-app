@@ -223,12 +223,15 @@ exports.sendPasswordResetEmail = function(req, res, next) {
        to: req.body.email,
      //Subject and text data
        subject: 'Hello from Texas Estate Docs',
-       html: 'Hello, This is not a plain-text email, I wanted to test some spicy Mailgun sauce in NodeJS! <a href="http://0.0.0.0:3030/validate?' + req.params.mail + '">Click here to add your email address to a mailing list</a>'
+       html: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
      }
 
      //Invokes the method to send emails given the above data with the helper library
      mailgun.messages().send(data, function (err, body) {
-         req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+         req.flash('error', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
          done(err, 'done');
      });
     }
