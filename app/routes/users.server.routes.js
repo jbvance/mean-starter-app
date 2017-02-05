@@ -19,7 +19,7 @@ module.exports = function(app) {
 
   //Forgot password functionality
 
-  app.get('/forgot', function(req, res) {    
+  app.get('/forgot', function(req, res) {
     res.render('forgot', {
       user: req.user,
       title: "Reset Password",
@@ -33,6 +33,7 @@ module.exports = function(app) {
 
   //Render the form to enter a new password if user is found
   app.get('/reset/:token', users.renderForgotPassword);
+  app.post('/reset/:token', users.resetPassword);
 
 
 };

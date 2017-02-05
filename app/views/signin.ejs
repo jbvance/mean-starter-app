@@ -7,9 +7,13 @@
 </head>
 <body>
   	<!-- Display flash messages  -->
-	<% for(var i in messages) { %>
-	   <div class="alert alert-danger"><%= messages[i] %></div>
-	<% } %>
+		<!-- Display flash messages  -->
+		<% if (flash && flash.message && flash.message.length > 1) { %>
+			 <div class="alert alert-<%=flash.type%> alert-dismissable">
+					 <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+					 <strong><%= flash.intro %></strong> <%= flash.message %>
+				 </div>
+		<% } %>
 
 	<div class="container">
 
@@ -20,6 +24,7 @@
         <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+				<br/>	<a href="/forgot">Forgot your password?</a>
       </form>
 
     </div> <!-- /container -->

@@ -80,7 +80,7 @@ exports.signup = function(req, res, next) {
     if (password.length < 6){
       const message = "Password must be at least six characters";
       // Set the flash messages
-      req.flash('error', message);
+      req.session.flash = {type: 'danger', intro: 'Invalid Password:  ', message: message};
       // Redirect the user back to the signup page
       return res.redirect('/signup');
     }
@@ -98,7 +98,7 @@ exports.signup = function(req, res, next) {
 				const message = getErrorMessage(err);
 
 				// Set the flash messages
-				req.flash('error', message);
+				req.session.flash = {type: 'danger', intro: 'Error:  ', message: message};
 
 				// Redirect the user back to the signup page
 				return res.redirect('/signup');
@@ -109,7 +109,8 @@ exports.signup = function(req, res, next) {
 				// If a login error occurs move to the next middleware
 				if (err) return next(err);
 
-				// Redirect the user back to the main application page
+				// Redirect the user back to the main application page with a confirmation message
+        req.session.flash = {type: 'success', intro: 'Sign up successfull', message: 'You have successfully signed up'};
 				return res.redirect('/');
 			});
 		});
@@ -176,6 +177,7 @@ exports.renderForgotPassword = function(req, res) {
       return res.redirect('/forgot');
     }
     res.render('reset', {
+      title: 'Reset Password',
       user: req.user
     });
   });
@@ -241,5 +243,63 @@ exports.sendPasswordResetEmail = function(req, res, next) {
   ], function(err) {
     if (err) return next(err);
     res.redirect('/forgot');
+  });
+}
+
+exports.resetPassword =  function(req, res, next) {
+  async.waterfall([
+    function(done) {
+      User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+        if (!user) {
+          req.session.flash = {type: 'danger', intro: 'Invalid Token:  ', message: 'Password reset token is invalid or has expired.'};
+          return res.redirect('back');
+        }
+
+        user.setPassword(req.body.password);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        user.save(function(err) {
+          req.logIn(user, function(err) {
+            done(err, user);
+          });
+        });
+      });
+    },
+    function(user, done) {
+
+      //Mailgun info
+      //Your api key, from Mailgun’s Control Panel
+      var api_key = process.env.MAILGUN_API_KEY;
+
+      //Your domain, from the Mailgun Control Panel
+      var domain = process.env.MAILGUN_DOMAIN
+
+      //Your sending email address
+      var from_who = 'admin@texasestatedocs.com';
+
+      //We pass the api_key and domain to the wrapper, or it won't be able to identify + send emails
+     var mailgun = new Mailgun({apiKey: api_key, domain: domain});
+
+     var data = {
+     //Specify email data
+       from: from_who,
+     //The email to contact
+       to: req.body.email,
+     //Subject and text data
+       subject: 'Your password has been changed',
+       text: 'Hello,\n\n' +
+           'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+     };
+
+     //Invokes the method to send emails given the above data with the helper library
+     mailgun.messages().send(data, function (err, body) {
+         req.session.flash = {type: 'info', intro: 'Message Sent:  ', message: 'Your password has been successfully updated.'};
+         done(err, 'done');
+     });
+
+    }
+  ], function(err) {
+    res.redirect('/');
   });
 }

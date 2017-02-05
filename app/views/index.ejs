@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <%- include ./partials/header.ejs %>
     <title><%= title %></title>
   </head>
   <body>
+    <% if (flash && flash.message && flash.message.length > 1) { %>
+       <div class="alert alert-<%=flash.type%> alert-dismissable">
+           <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+           <strong><%= flash.intro %></strong> <%= flash.message %>
+         </div>
+    <% } %>
+
     <% if ( userFullName ) { %>
-      <h2>Hello <%=userFullName%> </h2>
       <a href="/signout">Sign out</a>
     <% } else { %>
         <a href="/signup">Signup</a>
         <a href="/signin">Signin</a>
     <% } %>
     <br>
-    <img src="img/logo.png" alt="Logo">  
+    <img src="img/logo.png" alt="Logo">
+    <%- include ./partials/footer.ejs %>
   </body>
 </html>
