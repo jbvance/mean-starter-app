@@ -45,6 +45,14 @@ module.exports = function(){
   app.use(passport.session());
 
 
+  app.use(function(req, res, next){
+    //If there's a flash message jtransfer it
+    //to the context, then clear it
+    res.locals.flash = req.session.flash;
+    delete req.session.flash;
+    next();
+  });
+
   require('../app/routes/index.server.routes.js')(app);
   require('../app/routes/users.server.routes.js')(app);
   app.use('/api', routesApi);

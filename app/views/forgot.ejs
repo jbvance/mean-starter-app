@@ -5,8 +5,14 @@
 	<title><%= title %></title>
 </head>
 <body>
-  <% for(var i in messages) { %>
-     <div class="alert alert-danger"><%= messages[i] %></div>
+  <% if (flash && flash.message && flash.message.length > 1) { %>
+
+
+		 <div class="alert alert-<%=flash.type%> alert-dismissable">
+		     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+		     <strong><%= flash.intro %></strong> <%= flash.message %>
+		   </div>
+
   <% } %>
 
 <form action="/forgot" method="POST" >

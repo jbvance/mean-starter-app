@@ -19,7 +19,7 @@ module.exports = function(app) {
 
   //Forgot password functionality
 
-  app.get('/forgot', function(req, res) {
+  app.get('/forgot', function(req, res) {    
     res.render('forgot', {
       user: req.user,
       title: "Reset Password",

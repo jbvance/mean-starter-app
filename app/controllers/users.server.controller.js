@@ -169,7 +169,10 @@ exports.signout = function(req, res) {
 exports.renderForgotPassword = function(req, res) {
   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
     if (!user) {
-      req.flash('error', 'Password reset token is invalid or has expired.');
+      console.log("setting flash");
+      //req.session.flash = {type:'danger', intro: 'Invalid Link:  ', mesasge: 'Password reset token is invalid or has expired.'};
+      req.session.flash = {type: 'danger', intro: "Invalid Link:  ", message: 'Password reset token is invalid or has expired.\n\n Please enter your email and '+
+        'click \'Reset Password\' to be sent a new link.' };
       return res.redirect('/forgot');
     }
     res.render('reset', {
@@ -189,7 +192,7 @@ exports.sendPasswordResetEmail = function(req, res, next) {
     function(token, done) {
       User.findOne({ email: req.body.email }, function(err, user) {
         if (!user) {
-          req.flash('error', 'No account with that email address exists.');
+          req.session.flash = {type: 'danger', intro: "No Account:  ", message: 'No account with that email address exists.'};
           return res.redirect('/forgot');
         }
 
@@ -231,7 +234,7 @@ exports.sendPasswordResetEmail = function(req, res, next) {
 
      //Invokes the method to send emails given the above data with the helper library
      mailgun.messages().send(data, function (err, body) {
-         req.flash('error', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+         req.session.flash = {type: 'info', intro: 'Message Sent:  ', message: 'An e-mail has been sent to ' + user.email + ' with further instructions.'};
          done(err, 'done');
      });
     }
