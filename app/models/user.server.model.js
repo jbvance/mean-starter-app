@@ -55,6 +55,10 @@ UserSchema.methods.validPassword = function(password) {
   return this.hash === hash;
 };
 
+UserSchema.methods.goodPassword = function(password){
+	return (password && password.length > 6);
+};
+
 UserSchema.methods.generateJwt = function() {
   var expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);

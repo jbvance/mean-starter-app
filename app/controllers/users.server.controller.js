@@ -76,16 +76,16 @@ exports.signup = function(req, res, next) {
 		// Create a new 'User' model instance
 		const user = new User(req.body);
 		const message = null;
-    //require password to be at least six characters
-    if (password.length < 6){
-      const message = "Password must be at least six characters";
-      // Set the flash messages
-      req.session.flash = {type: 'danger', intro: 'Invalid Password:  ', message: message};
-      // Redirect the user back to the signup page
-      return res.redirect('/signup');
-    }
+
+
 		// Set the user provider property
 		user.provider = 'local';
+
+    //require password to be at least six characters
+    if (!user.goodPassword(password)){
+      req.session.flash = {type: 'danger', intro: 'Invalid Password:  ', message: "Password must be at least six characters"};
+      res.redirect('back');
+    }
 
     user.setPassword(req.body.password);
 
@@ -252,6 +252,17 @@ exports.resetPassword =  function(req, res, next) {
       User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
         if (!user) {
           req.session.flash = {type: 'danger', intro: 'Invalid Token:  ', message: 'Password reset token is invalid or has expired.'};
+          return res.redirect('back');
+        }
+
+        //require password to be at least six characters
+        if (!user.goodPassword(req.body.password)){
+          req.session.flash = {type: 'danger', intro: 'Invalid Password:  ', message: "Password must be at least six characters"};
+          return res.redirect('back');
+        }
+        //If passwords don't match, redirect and try again
+        if (req.body.password !== req.body.confirm) {
+          req.session.flash = {type: 'danger', intro: 'Passwords don\'t match:  ', message: 'Your password confirmation does not match your password. Please try again.'};
           return res.redirect('back');
         }
 
